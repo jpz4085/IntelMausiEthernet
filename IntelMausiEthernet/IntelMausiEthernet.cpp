@@ -179,6 +179,7 @@ bool IntelMausi::init(OSDictionary *properties)
         mtu = ETH_DATA_LEN;
         wolCapable = false;
         wolActive = false;
+        wolPwrOff = true;
         enableTSO4 = false;
         enableTSO6 = false;
         enableCSO6 = false;
@@ -300,6 +301,10 @@ bool IntelMausi::start(IOService *provider)
         IOLog("Ethernet [IntelMausi]: attachInterface() failed.\n");
         goto error3;
     }
+    
+    if (provider->getProperty("disable-wol-from-shutdown"))
+        wolPwrOff = false;
+    
     pciDevice->close(this);
     result = true;
     
@@ -414,7 +419,14 @@ void IntelMausi::systemWillShutdown(IOOptionBits specifier)
     DebugLog("systemWillShutdown() ===>\n");
     
     if ((kIOMessageSystemWillPowerOff | kIOMessageSystemWillRestart) & specifier) {
-        disable(netif);
+        setWakeOnLanFromShutdown();
+        
+        /* Call intelDisable to set WOL from S5 if contoller already
+        disabled otherwise call disable at shutdown if required. */
+        if (!isEnabled && wolActive)
+            intelDisable();
+        else
+            disable(netif);
         
         /* Restore the original MAC address. */
         adapterData.hw.mac.ops.rar_set(&adapterData.hw, adapterData.hw.mac.perm_addr, 0);
@@ -1002,6 +1014,24 @@ IOReturn IntelMausi::setWakeOnMagicPacket(bool active)
     DebugLog("setWakeOnMagicPacket() <===\n");
     
     return result;
+}
+
+void IntelMausi::setWakeOnLanFromShutdown()
+{
+    DebugLog ("setWakeOnLanFromShutdown() ===>\n");
+    
+    if (wolCapable && wolPwrOff) {
+        unsigned long wakeSetting = 0;
+        
+        getAggressiveness(kPMEthernetWakeOnLANSettings, &wakeSetting);
+        
+        if (kIOEthernetWakeOnMagicPacket & wakeSetting) {
+            wolActive = true;
+            DebugLog("Ethernet [IntelMausi]: Wake On LAN from shutdown enabled.\n");
+        }
+    }
+    
+    DebugLog ("setWakeOnLanFromShutdown() <===\n");
 }
 
 IOReturn IntelMausi::getPacketFilters(const OSSymbol *group, UInt32 *filters) const
