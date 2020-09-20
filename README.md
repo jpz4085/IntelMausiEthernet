@@ -8,6 +8,7 @@ properties under the network controller which will restore the stock functionali
 Links:
 
 https://github.com/Mieze/IntelMausiEthernet
+
 https://github.com/fischerscode/IntelMausiEthernet-WOL (Enabled by default.)
 
 OS X driver for Intel onboard LAN
