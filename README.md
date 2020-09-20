@@ -1,7 +1,9 @@
 # IntelMausiEthernet
 
 Fork of IntelMausiEthernet extension from Meize with support for Wake on LAN from shutdown.
+
 WOL in S3/S5 is controlled by the macOS "Wake for network access" or "womp" system setting.
+
 This feature can be disabled by adding a key "disable-wol-from-shutdown" to the Clover device 
 properties under the network controller which will restore the stock functionality if desired.
 
