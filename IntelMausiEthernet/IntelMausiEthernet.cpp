@@ -302,7 +302,7 @@ bool IntelMausi::start(IOService *provider)
         goto error3;
     }
     
-    if (provider->getProperty("disable-wol-from-shutdown"))
+    if (pciDevice->getProperty("disable-wol-from-shutdown"))
         wolPwrOff = false;
     
     pciDevice->close(this);
@@ -420,13 +420,7 @@ void IntelMausi::systemWillShutdown(IOOptionBits specifier)
     
     if ((kIOMessageSystemWillPowerOff | kIOMessageSystemWillRestart) & specifier) {
         setWakeOnLanFromShutdown();
-        
-        /* Call intelDisable to set WOL from S5 if contoller already
-        disabled otherwise call disable at shutdown if required. */
-        if (!isEnabled && wolActive)
-            intelDisable();
-        else
-            disable(netif);
+        disable(netif);
         
         /* Restore the original MAC address. */
         adapterData.hw.mac.ops.rar_set(&adapterData.hw, adapterData.hw.mac.perm_addr, 0);
@@ -1027,7 +1021,12 @@ void IntelMausi::setWakeOnLanFromShutdown()
         
         if (kIOEthernetWakeOnMagicPacket & wakeSetting) {
             wolActive = true;
-            DebugLog("Ethernet [IntelMausi]: Wake On LAN from shutdown enabled.\n");
+            DebugLog("Ethernet [IntelMausi]: Wake on magic packet enabled.\n");
+        }
+        if (!isEnabled && wolActive) {
+            intelEnable();
+            intelDisable();
+            DebugLog("Ethernet [IntelMausi]: Wake On LAN from shutdown active.\n");
         }
     }
     

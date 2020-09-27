@@ -402,8 +402,9 @@ private:
     /* timer action */
     void timerAction(IOTimerEventSource *timer);
     
-    /* Set wolActive prior to shutdown or restart to support WOL
-     from S5 if "Wake for network access" or "WOMP" is enabled. */
+    /* Set wolActive prior to shutdown or restart to support WOL from S5
+     if "Wake for network access" or "WOMP" is enabled and run the hardware
+     enable/disable routines if the controller is already disabled. */
     void setWakeOnLanFromShutdown();
     
 private:
