@@ -1,5 +1,7 @@
 # IntelMausiEthernet
 
+OS X driver for Intel onboard LAN
+
 Fork of IntelMausiEthernet extension from Meize with support for Wake on LAN from shutdown. WOL in S3/S5 is controlled by the macOS "Wake for network access" or "womp" system setting. This feature can be disabled by adding a key "disable-wol-from-shutdown" to the Clover device properties under the network controller which will restore the stock functionality if desired.
 
 Links:
@@ -8,7 +10,15 @@ https://github.com/Mieze/IntelMausiEthernet
 
 https://github.com/fischerscode/IntelMausiEthernet-WOL (Enabled by default.)
 
-#### OS X driver for Intel onboard LAN
+# Support
+
+Please refer to the driver's thread on insanelymac.com
+
+https://www.insanelymac.com/forum/topic/304235-intelmausiethernetkext-for-intel-onboard-lan/
+
+in case you have further questions, need support or want to submit a problem report. As of now, support requests here on Github will be ignored!
+
+# Project Description
 
 A few days before Christmas I started my latest project, a new driver for recent Intel onboard LAN controllers. My intention was not to replace hnak's AppleIntelE1000e.kext completely but to deliver best performance and stability on recent hardware. That's why I dropped support for a number of older NICs. Currently the driver supports:
  
@@ -51,11 +61,3 @@ Key Features of the Driver
 - Support for Energy Efficient Ethernet (EEE).
 - VLAN support is implemented but untested as I have no need for it.
 - The driver is published under GPLv2.
-
-Support
-
-Please refer to the driver's thread on insanelymac.com
-
-https://www.insanelymac.com/forum/topic/304235-intelmausiethernetkext-for-intel-onboard-lan/
-
-in case you have further questions, need support or want to submit a problem report. As of now, support requests here on Github will be ignored!
